@@ -14,9 +14,9 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
+            min-height: 100vh; /* Ensure background covers full viewport height */
             margin: 0;
-            overflow: hidden; /* Prevent scroll on small screens if content fits */
+            /* Removed overflow: hidden; to allow scrolling */
         }
         .container {
             background-color: rgba(255, 255, 255, 0.95); /* Slightly transparent white */
@@ -30,7 +30,9 @@
             align-items: center;
             text-align: center;
             position: relative;
-            overflow: hidden; /* For inner elements like buttons */
+            /* Removed overflow: hidden; to allow content within to scroll if needed */
+            max-height: 95vh; /* Limit container height to prevent it from going off-screen */
+            overflow-y: auto; /* Enable vertical scrolling for container if content overflows */
         }
         .oval-frame {
             width: 120px; /* Size of the image */
@@ -40,6 +42,7 @@
             border: 5px solid #fff; /* White border around the image */
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
             margin-bottom: 1rem;
+            flex-shrink: 0; /* Prevent shrinking on small screens */
         }
         .oval-frame img {
             width: 100%;
@@ -52,6 +55,7 @@
             color: #333;
             margin-bottom: 1.5rem;
             text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+            flex-shrink: 0; /* Prevent shrinking on small screens */
         }
         .question-text {
             font-size: 1.25rem; /* Larger question text */
@@ -61,6 +65,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            flex-shrink: 0; /* Prevent shrinking on small screens */
         }
         .option-button {
             background-color: #6a0dad; /* Deep purple */
@@ -76,6 +81,7 @@
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             border: none;
             outline: none;
+            flex-shrink: 0; /* Prevent shrinking on small screens */
         }
         .option-button:hover {
             background-color: #8a2be2; /* Lighter purple on hover */
@@ -90,17 +96,20 @@
             font-size: 0.9rem;
             color: #888;
             margin-top: 1rem;
+            flex-shrink: 0; /* Prevent shrinking on small screens */
         }
         .result-container {
             font-size: 1.5rem;
             font-weight: 700;
             color: #333;
             margin-top: 1.5rem;
+            flex-shrink: 0; /* Prevent shrinking on small screens */
         }
         .result-description {
             font-size: 1rem;
             color: #666;
             margin-top: 0.5rem;
+            flex-shrink: 0; /* Prevent shrinking on small screens */
         }
         .restart-button {
             background-color: #4CAF50; /* Green for restart */
@@ -115,6 +124,7 @@
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             border: none;
             outline: none;
+            flex-shrink: 0; /* Prevent shrinking on small screens */
         }
         .restart-button:hover {
             background-color: #45a049;
@@ -125,6 +135,7 @@
             margin-top: 2rem;
             font-size: 0.8rem;
             color: #777;
+            flex-shrink: 0; /* Prevent shrinking on small screens */
         }
         /* Simple fade transition for questions */
         .fade-enter-active, .fade-leave-active {
