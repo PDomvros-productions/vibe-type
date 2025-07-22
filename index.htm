@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>What's Your Vibe?</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(to bottom right, #ff7e5f, #feb47b); /* Candy Crush style gradient */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow: hidden; /* Prevent scroll on small screens if content fits */
+        }
+        .container {
+            background-color: rgba(255, 255, 255, 0.95); /* Slightly transparent white */
+            border-radius: 2rem; /* More rounded corners */
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem; /* Increased padding */
+            max-width: 90%; /* Responsive width */
+            width: 380px; /* Max width for mobile */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden; /* For inner elements like buttons */
+        }
+        .oval-frame {
+            width: 120px; /* Size of the image */
+            height: 120px;
+            border-radius: 50%; /* Makes it an oval/circle */
+            overflow: hidden;
+            border: 5px solid #fff; /* White border around the image */
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            margin-bottom: 1rem;
+        }
+        .oval-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Ensures the image covers the oval area */
+        }
+        .title {
+            font-size: 2.25rem; /* Larger title */
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 1.5rem;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+        .question-text {
+            font-size: 1.25rem; /* Larger question text */
+            color: #555;
+            margin-bottom: 1.5rem;
+            min-height: 60px; /* Ensure consistent height for questions */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .option-button {
+            background-color: #6a0dad; /* Deep purple */
+            color: white;
+            padding: 0.8rem 1.2rem; /* Comfortable padding */
+            margin-bottom: 0.75rem; /* Spacing between buttons */
+            border-radius: 9999px; /* Pill shape */
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%; /* Full width buttons */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: none;
+            outline: none;
+        }
+        .option-button:hover {
+            background-color: #8a2be2; /* Lighter purple on hover */
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        }
+        .option-button:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .progress-text {
+            font-size: 0.9rem;
+            color: #888;
+            margin-top: 1rem;
+        }
+        .result-container {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #333;
+            margin-top: 1.5rem;
+        }
+        .result-description {
+            font-size: 1rem;
+            color: #666;
+            margin-top: 0.5rem;
+        }
+        .restart-button {
+            background-color: #4CAF50; /* Green for restart */
+            color: white;
+            padding: 0.8rem 1.5rem;
+            margin-top: 1.5rem;
+            border-radius: 9999px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: none;
+            outline: none;
+        }
+        .restart-button:hover {
+            background-color: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        }
+        .footer {
+            margin-top: 2rem;
+            font-size: 0.8rem;
+            color: #777;
+        }
+        /* Simple fade transition for questions */
+        .fade-enter-active, .fade-leave-active {
+            transition: opacity 0.5s ease;
+        }
+        .fade-enter, .fade-leave-to /* .fade-leave-active in <2.1.8 */ {
+            opacity: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="oval-frame">
+            <!-- Updated image source and added onerror for fallback -->
+            <img src="panos.jpg" alt="Personality Words" onerror="this.onerror=null;this.src='https://placehold.co/120x120/E0BBE4/FFFFFF?text=Image';">
+        </div>
+        <h1 class="title">What's Your Vibe?</h1>
+
+        <div id="quiz-screen">
+            <p id="question-text" class="question-text">Loading question...</p>
+            <div id="options-container" class="flex flex-col w-full">
+                <!-- Options will be dynamically inserted here -->
+            </div>
+            <p id="progress-text" class="progress-text">Question 1 of 10</p>
+        </div>
+
+        <div id="result-screen" class="hidden">
+            <p class="result-container">You are a <span id="personality-type"></span>!</p>
+            <p id="personality-description" class="result-description"></p>
+            <button id="restart-button" class="restart-button">Play Again</button>
+        </div>
+
+        <!-- Footer added here -->
+        <div class="footer">
+            Created by Panagiotis Domvros 2025
+        </div>
+    </div>
+
+    <script>
+        // Define questions and their associated personality types
+        const questions = [
+            {
+                question: "How do you typically start your day?",
+                options: [
+                    { text: "Up before the sun, ready to go!", types: ["Early Bird"] },
+                    { text: "Slowly, after a few snoozes.", types: ["Night Owl"] },
+                    { text: "With a quick check of the latest tech news.", types: ["Techie"] }
+                ]
+            },
+            {
+                question: "What's your ideal evening activity?",
+                options: [
+                    { text: "A quiet night in with a good book.", types: [] }, // Neutral or general
+                    { text: "Hitting the town with friends, late into the night.", types: ["Night Owl"] },
+                    { text: "Trying out a new recipe or restaurant.", types: ["Foodie"] }
+                ]
+            },
+            {
+                question: "When faced with a messy situation, what's your first instinct?",
+                options: [
+                    { text: "Organize and clean it immediately.", types: ["Neat Freak"] },
+                    { text: "Leave it for later, it's fine.", types: [] },
+                    { text: "Complain loudly about the mess.", types: ["Hothead"] }
+                ]
+            },
+            {
+                question: "How do you react to unexpected changes in plans?",
+                options: [
+                    { text: "I get annoyed and frustrated.", types: ["Hothead"] },
+                    { text: "I adapt easily and find a new solution.", types: [] },
+                    { text: "I worry about all the possible negative outcomes.", types: ["Worrywart"] }
+                ]
+            },
+            {
+                question: "What's your approach to social gatherings?",
+                options: [
+                    { text: "I love being the center of attention and talking to everyone.", types: ["Bigmouth"] },
+                    { text: "I prefer to observe and listen.", types: [] },
+                    { text: "I try to make sure everyone else is having a good time.", types: ["People Pleaser"] }
+                ]
+            },
+            {
+                question: "When working on a project, what's most important to you?",
+                options: [
+                    { text: "Getting it done perfectly, no matter the time.", types: ["Perfectionist"] },
+                    { text: "Finishing it quickly.", types: [] },
+                    { text: "Making sure everyone on the team is happy with the outcome.", types: ["People Pleaser"] }
+                ]
+            },
+            {
+                question: "How do you feel about rules and traditions?",
+                options: [
+                    { text: "They're there for a reason, I follow them.", types: [] },
+                    { text: "I often question them or find ways around them.", types: ["Rebel"] },
+                    { text: "I worry about breaking them.", types: ["Worrywart"] }
+                ]
+            },
+            {
+                question: "What's your favorite part about going out?",
+                options: [
+                    { text: "The delicious food and drinks.", types: ["Foodie"] },
+                    { text: "Getting dressed up and showing off my style.", types: ["Fashionista"] },
+                    { text: "Trying out new gadgets or apps on my phone.", types: ["Techie"] }
+                ]
+            },
+            {
+                question: "What kind of content do you consume most online?",
+                options: [
+                    { text: "News about the latest tech innovations.", types: ["Techie"] },
+                    { text: "Fashion blogs and style guides.", types: ["Fashionista"] },
+                    { text: "Food vlogs and recipe tutorials.", types: ["Foodie"] }
+                ]
+            },
+            {
+                question: "How do you handle criticism?",
+                options: [
+                    { text: "I take it personally and get upset.", types: ["Hothead"] },
+                    { text: "I consider it and try to improve.", types: [] },
+                    { text: "I worry about what others think of me.", types: ["Worrywart"] }
+                ]
+            }
+        ];
+
+        // Descriptions for each personality type
+        const personalityDescriptions = {
+            "Early Bird": "You're a morning person who loves to get a head start on the day. The early hours are your most productive!",
+            "Night Owl": "You thrive in the evening and night. Your creativity and energy peak when others are winding down.",
+            "Hothead": "You tend to get angry or frustrated quickly. Your emotions are strong and immediate.",
+            "Worrywart": "You often find yourself worrying about various things, big or small. You like to be prepared for anything.",
+            "Neat Freak": "You have a strong desire for cleanliness and order. Everything has its place, and you like it that way!",
+            "Bigmouth": "You love to talk and share your thoughts. You're often the life of the party and have a lot to say.",
+            "People Pleaser": "You strive to make others happy and often put their needs before your own. You value harmony.",
+            "Perfectionist": "You aim for flawlessness in everything you do. Good isn't good enough; it has to be perfect!",
+            "Rebel": "You tend to question authority and enjoy breaking rules or doing things your own way. You value independence.",
+            "Foodie": "You have a deep passion for food – exploring new cuisines, cooking, and enjoying delicious meals.",
+            "Fashionista": "You love fashion and expressing yourself through your style. You're always up-to-date with the latest trends.",
+            "Techie": "You're passionate about technology and gadgets. You love learning about new innovations and how things work."
+        };
+
+        let currentQuestionIndex = 0;
+        let personalityScores = {}; // Stores scores for each personality type
+
+        const quizScreen = document.getElementById('quiz-screen');
+        const resultScreen = document.getElementById('result-screen');
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const progressText = document.getElementById('progress-text');
+        const personalityTypeSpan = document.getElementById('personality-type');
+        const personalityDescriptionPara = document.getElementById('personality-description');
+        const restartButton = document.getElementById('restart-button');
+
+        // Initialize scores for all personality types
+        function initializeScores() {
+            Object.keys(personalityDescriptions).forEach(type => {
+                personalityScores[type] = 0;
+            });
+        }
+
+        function displayQuestion() {
+            if (currentQuestionIndex < questions.length) {
+                const question = questions[currentQuestionIndex];
+                questionText.textContent = question.question;
+                optionsContainer.innerHTML = ''; // Clear previous options
+
+                question.options.forEach(option => {
+                    const button = document.createElement('button');
+                    button.textContent = option.text;
+                    button.className = 'option-button';
+                    button.onclick = () => handleAnswer(option.types);
+                    optionsContainer.appendChild(button);
+                });
+
+                progressText.textContent = `Question ${currentQuestionIndex + 1} of ${questions.length}`;
+                quizScreen.classList.remove('fade-leave-to');
+                quizScreen.classList.add('fade-enter-active');
+            } else {
+                showResult();
+            }
+        }
+
+        function handleAnswer(types) {
+            // Add scores for selected types
+            types.forEach(type => {
+                if (personalityScores[type] !== undefined) {
+                    personalityScores[type]++;
+                }
+            });
+
+            // Add a slight delay for visual feedback before moving to the next question
+            quizScreen.classList.remove('fade-enter-active');
+            quizScreen.classList.add('fade-leave-active');
+
+            setTimeout(() => {
+                currentQuestionIndex++;
+                displayQuestion();
+            }, 300); // Adjust delay as needed
+        }
+
+        function showResult() {
+            quizScreen.classList.add('hidden');
+            resultScreen.classList.remove('hidden');
+
+            let maxScore = -1;
+            let determinedPersonality = "Unique Individual"; // Default if no clear winner
+
+            // Find the personality type with the highest score
+            for (const type in personalityScores) {
+                if (personalityScores[type] > maxScore) {
+                    maxScore = personalityScores[type];
+                    determinedPersonality = type;
+                } else if (personalityScores[type] === maxScore && maxScore > 0) {
+                    // Handle ties: if multiple types have the same max score, pick one randomly
+                    // or based on a predefined order. For simplicity, we'll just keep the first one found,
+                    // or you could implement a more complex tie-breaking logic.
+                    // For now, if there's a tie, the one found first (alphabetically by key) will win.
+                }
+            }
+
+            // If all scores are 0 (no types matched), default to a general message
+            if (maxScore === 0) {
+                determinedPersonality = "Unique Individual";
+                personalityDescriptionPara.textContent = "You have a wonderfully unique blend of traits that don't fit into a single category!";
+            } else {
+                personalityDescriptionPara.textContent = personalityDescriptions[determinedPersonality];
+            }
+
+            personalityTypeSpan.textContent = determinedPersonality;
+        }
+
+        function restartQuiz() {
+            currentQuestionIndex = 0;
+            initializeScores(); // Reset all scores
+            resultScreen.classList.add('hidden');
+            quizScreen.classList.remove('hidden');
+            displayQuestion();
+        }
+
+        // Event listener for the restart button
+        restartButton.addEventListener('click', restartQuiz);
+
+        // Initial setup
+        window.onload = () => {
+            initializeScores();
+            displayQuestion();
+        };
+    </script>
+</body>
+</html>
